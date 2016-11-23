@@ -161,11 +161,16 @@ class Client {
 			myPawn = 2; // Black
 			enemyPawn = 4; // White
 		}
-		
+
+
+		//parcours le tableau en x y
 		for (int x = 0; x != 8; ++x) {
 			for (int y = 0; y != 8; ++y) {
+
+				//si c'est un de nos pions
 				if (board[x][y] == myPawn) {
 					moveLength = 0;
+					//parcours la ligne du pions et compte le nombres de pions
 					for (int i = 0; i != 8; ++i) {
 						if (board[i][y] != 0) {
 							++moveLength;
@@ -173,39 +178,48 @@ class Client {
 					}
 					
 					isValid = true;
+					//Si la case en x est plus petite que la longeur du mouvement possible alors le mouvement nest pas valide
 					if (x - moveLength < 0) {
 						isValid = false;
+					//sinon  si c'est un de nos pions qui est à la position du mouvement
 					} else if (board[x - moveLength][y] == myPawn) {
 						isValid = false;
 					} else {
+						//si on passe par dessus un pions adverse le mouvement est invalide
 						for (int i = 1; i != moveLength; ++i) {
 							if (board[x - i][y] == enemyPawn) {
 								isValid = false;
 							}
 						}
 					}
-					
+
+					//si le mouvement est valide on l'ajoute
 					if (isValid) {
 						moves.add(intToChar(x) + (y+1) + intToChar(x - moveLength) + (y+1));
 					}
 					
 					isValid = true;
+					//si on dépasse le côté droit du tableau le mouvement est pas valide
 					if (x + moveLength >= 8) {
 						isValid = false;
+						//si y'as notre pions à la position d'arrivé notre pion n'est pas valide
 					} else if (board[x + moveLength][y] == myPawn) {
 						isValid = false;
+
 					} else {
+						//si y'as un pion advee à la droite du mouvement il est pas valide
 						for (int i = 1; i != moveLength; ++i) {
 							if (board[x + i][y] == enemyPawn) {
 								isValid = false;
 							}
 						}
 					}
-					
+					//ajout du mouvement
 					if (isValid) {
 						moves.add(intToChar(x) + (y+1) + intToChar(x + moveLength) + (y+1));
 					}
-					
+
+					//même logique en y par en haut
 					moveLength = 0;
 					for (int i = 0; i != 8; ++i) {
 						if (board[x][i] != 0) {
@@ -230,7 +244,7 @@ class Client {
 						moves.add(intToChar(x) + (y+1) + intToChar(x) + ((y+1) - moveLength));
 					}
 					
-					// Down move
+					//mouvement vers le bas
 					isValid = true;
 					if (y + moveLength >= 8) {
 						isValid = false;
@@ -247,7 +261,8 @@ class Client {
 					if (isValid) {
 						moves.add(intToChar(x) + (y+1) + intToChar(x) + ((y+1) + moveLength));
 					}
-					
+
+					//diagonale nw se
 					moveLength = 0;
 					if (x >= y) {
 						for (int i = 0; i != 8 - (x - y); ++i) {
@@ -264,10 +279,13 @@ class Client {
 					}
 					
 					isValid = true;
+					//diago si dépasse le tableau en xy
 					if (y - moveLength < 0 || x - moveLength < 0) {
 						isValid = false;
+					//si c'est un de nos pions à la destination
 					} else if (board[x - moveLength][y - moveLength] == myPawn) {
 						isValid = false;
+					//si on passe par dessus un pion adverse
 					} else {
 						for (int i = 1; i != moveLength; ++i) {
 							if (board[x - i][y - i] == enemyPawn) {
@@ -279,7 +297,7 @@ class Client {
 					if (isValid) {
 						moves.add(intToChar(x)+ (y+1) + intToChar(x - moveLength)+ ((y+1) - moveLength));
 					}
-					
+					// diagonale ne sw
 					isValid = true;
 					if (y + moveLength >= 8 || x + moveLength >= 8) {
 						isValid = false;
@@ -298,6 +316,7 @@ class Client {
 					}
 					
 					moveLength = 0;
+					///regarder pas sur c'est quoi????
 					if (x >= 8 - y - 1) {
 						for (int i = 0; i != 8 - (x - (8 - y - 1)); ++i) {
 							if (board[x - (8 - y - 1) + i][8 - i - 1] != 0) {
