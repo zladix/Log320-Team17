@@ -98,7 +98,9 @@ class Client {
 				String move = null;
 				//move = console.readLine();
 				String [] moves = validMoves(false);
+				//Modifier ca pour implanter le MinMax
 				move = moves[randInt(moves.length)];
+				
 				System.out.println("Move : " + move);
 				tempBoard = board;
 				board = updateBoard(move);
@@ -115,6 +117,7 @@ class Client {
 				String move = null;
 				//move = console.readLine();
 				String [] moves = validMoves(false);
+				//Modifier ca pour implanter le MinMax
 				move = moves[randInt(moves.length)];
 
 				System.out.println("Move : " + move);
@@ -147,6 +150,7 @@ class Client {
 		System.out.println();
 	}
 	
+	//Retourne tout les coups possibles dans le tour actuel
 	private static String[] validMoves(boolean isWhitePlayer) {
 		ArrayList<String> moves = new ArrayList<String>();
 		int myPawn;
