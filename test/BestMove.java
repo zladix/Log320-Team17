@@ -3,16 +3,16 @@ package test;
 import java.util.Iterator;
 
 public class BestMove {
-	public String bestMove;
+	public String move;
 	public double score;
 	
 	public BestMove() {
-        bestMove = null;
+        move = null;
         score = 0;
     }
 	
-	public BestMove(String bestMove, double score) {
-        this.bestMove = bestMove;
+	public BestMove(String move, double score) {
+        this.move = move;
         this.score = score;
     }
 

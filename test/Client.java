@@ -11,6 +11,8 @@ class Client {
 	private static int[][] tempBoard;
 	static int[][] board = new int[8][8];
 	private static int mark[][] = new int[8][8];
+	private static boolean isWhite = true;
+	private static BestMove bestMove = new BestMove();
 	
 	public static void main(String[] args) {
          
@@ -50,13 +52,33 @@ class Client {
 
                 System.out.println("Nouvelle partie! Vous jouer blanc, entrez votre premier coup : ");
                 String move = null;
-                move = console.readLine();
-                
-                tempBoard = board;
-                board = updateBoard(move);
-                
-                printBoard();
-                
+            	String [] moves = validMoves(isWhite);
+            	bestMove = new BestMove();
+            	double heuristiqueTemp = 0;
+				//Modifier ca pour implanter le MinMax
+				 for (String myMove : moves) {
+					 heuristiqueTemp = setHeuristique(myMove,isWhite);
+					 if(bestMove.move == null)
+					 {
+						 bestMove.move = myMove;
+						 bestMove.score = heuristiqueTemp;
+					 }
+					 else
+					 {
+						 if(bestMove.score < heuristiqueTemp)
+						 {
+							 bestMove.move = myMove;
+							 bestMove.score = heuristiqueTemp;
+						 }
+					 }
+				 }
+				 
+				move = bestMove.move;
+				
+				System.out.println("Move : " + move);
+				tempBoard = board;
+				board = updateBoard(move);
+				printBoard();
 				output.write(move.getBytes(),0,move.length());
 				output.flush();
             }
@@ -64,7 +86,7 @@ class Client {
             if(cmd == '2'){
                 System.out.println("Nouvelle partie! Vous jouez noir, attendez le coup des blancs");
                 byte[] aBuffer = new byte[1024];
-				
+				isWhite = false;
 				int size = input.available();
 				//System.out.println("size " + size);
 				input.read(aBuffer,0,size);
@@ -100,13 +122,29 @@ class Client {
 		       	//System.out.println("Entrez votre coup : ");
 				String move = null;
 				//move = console.readLine();
-				String [] moves = validMoves(false);
+				String [] moves = validMoves(isWhite);
+				//Modifier ca pour implanter le MinMax
+				bestMove = new BestMove();
+            	double heuristiqueTemp = 0;
 				//Modifier ca pour implanter le MinMax
 				 for (String myMove : moves) {
-					 setHeuristique(myMove,false);
+					 heuristiqueTemp = setHeuristique(myMove,isWhite);
+					 if(bestMove.move == null)
+					 {
+						 bestMove.move = myMove;
+						 bestMove.score = heuristiqueTemp;
+					 }
+					 else
+					 {
+						 if(bestMove.score < heuristiqueTemp)
+						 {
+							 bestMove.move = myMove;
+							 bestMove.score = heuristiqueTemp;
+						 }
+					 }
 				 }
 				 
-				move = moves[randInt(moves.length)];
+				move = bestMove.move;
 				
 				System.out.println("Move : " + move);
 				tempBoard = board;
@@ -123,13 +161,28 @@ class Client {
 
 				String move = null;
 				//move = console.readLine();
-				String [] moves = validMoves(false);
+				String [] moves = validMoves(isWhite);
+				bestMove = new BestMove();
+            	double heuristiqueTemp = 0;
 				//Modifier ca pour implanter le MinMax
 				 for (String myMove : moves) {
-					 setHeuristique(myMove,false);
+					 heuristiqueTemp = setHeuristique(myMove,isWhite);
+					 if(bestMove.move == null)
+					 {
+						 bestMove.move = myMove;
+						 bestMove.score = heuristiqueTemp;
+					 }
+					 else
+					 {
+						 if(bestMove.score < heuristiqueTemp)
+						 {
+							 bestMove.move = myMove;
+							 bestMove.score = heuristiqueTemp;
+						 }
+					 }
 				 }
 				 
-				move = moves[randInt(moves.length)];
+				move = bestMove.move;
 
 				System.out.println("Move : " + move);
 				
@@ -386,29 +439,6 @@ class Client {
 		return moves.toArray(new String[moves.size()]);
 	}
 	
-	private static void placeHeuristics() {
-		
-	}
-	
-	// http://www.cis.upenn.edu/~cis110/14fa/hw/hw09/FloodFill.java
-	private static void getTouchingNodes(int x, int y, int src, int target) {
-		if (x < 0 || y < 0) return;
-		if (x > 7 || y > 7) return;
-		if (mark[x][y] == 1) return; // Si ces coordonnees ont deja ete vues
-		if (board[x][y] != src) return;
-		
-		mark[x][y] = target;
-		
-		getTouchingNodes(x - 1, y, src, target);// w
-		getTouchingNodes(x + 1, y, src, target);// e
-		getTouchingNodes(x, y + 1, src, target);// n
-		getTouchingNodes(x, y - 1, src, target);// s
-		getTouchingNodes(x - 1, y - 1, src, target);// sw
-		getTouchingNodes(x + 1, y + 1, src, target);// ne
-		getTouchingNodes(x - 1, y + 1, src, target);// nw
-		getTouchingNodes(x + 1, y - 1, src, target);// se
-	}
-	
 	private final static String intToChar(int i) {
 		String [] chars = new String[] {"A", "B", "C", "D", "E", "F", "G", "H" };
 		return chars[i];
@@ -464,13 +494,13 @@ class Client {
 			ennemyPawn = 4;
 		}
 		
-		//trransformer le mouvement d'arrÃªt en valeur numÃ©rique
-		//le A majuscule = 65 en ascii donc je rÃ©duit la valeur recu a 0 pour pouvoir Ãªtre bien positionnÃ© dans le tableau
+		//transformer le mouvement d'arrêt en valeur numérique
+		//le A majuscule = 65 en ascii donc je réduit la valeur recu a 0 pour pouvoir être bien positionné dans le tableau
 		//source : https://www.cs.cmu.edu/~pattis/15-1XX/common/handouts/ascii.html
 		
-		int posX = Character.getNumericValue(move.charAt(0)) - 65;
+		int posX = Character.getNumericValue(move.charAt(0)) - 10;
 		int posY =  Character.getNumericValue(move.charAt(1));
-		int posX2 = Character.getNumericValue(move.charAt(2)) - 65;
+		int posX2 = Character.getNumericValue(move.charAt(2)) - 10;
 		int posY2 =  Character.getNumericValue(move.charAt(3));
 		heuristique = calculerHeuristique(posX2,posY2,isWhite) - calculerHeuristique(posX,posY,isWhite);
 		
@@ -487,9 +517,9 @@ class Client {
 	//+2 si distance est environ Ã  0
 	//+1 si elle est a une ou 2 case du centre
 	//+0.5 si 2 c'est a 2 cases et plus
-	//+2 pour chacun de nos pions qui touche Ã  la diagonale
-	//+1 pour chacun de nos pions qui touche Ã  l,horizontale verticale
-	//+0.5 si on bouffe un pion
+	//+2 pour chacun de nos pions qui touche a  la diagonale
+	//+1 pour chacun de nos pions qui touche a  l,horizontale verticale
+	//+0.2 si on bouffe un pion
 	
 	public static double calculerHeuristique(int posX, int posY, boolean isWhite)
 	{
@@ -566,7 +596,7 @@ class Client {
 		}
 		
 		if(posX < 7){
-			//Ã©tape 3 regarder Ã  l'horizontale
+			//Étape 3 regarder Ã  l'horizontale
 			if(board[posX + 1][posY] == myPawn){
 				heuristique+=0.5;
 			}
