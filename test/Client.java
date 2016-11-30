@@ -72,7 +72,6 @@ class Client {
 						 }
 					 }
 				 }
-				 
 				move = bestMove.move;
 				
 				System.out.println("Move : " + move);
@@ -482,17 +481,6 @@ class Client {
 	public static double setHeuristique(String move, boolean isWhite){
 		
 		double heuristique = 0;
-		double dist = 0;
-		int myPawn;
-		int ennemyPawn;
-		
-		if (isWhite) {
-			myPawn = 4; // White
-			ennemyPawn = 2;
-		} else {
-			myPawn = 2; // Black
-			ennemyPawn = 4;
-		}
 		
 		//transformer le mouvement d'arrêt en valeur numérique
 		//le A majuscule = 65 en ascii donc je réduit la valeur recu a 0 pour pouvoir être bien positionné dans le tableau
@@ -536,10 +524,10 @@ class Client {
 			ennemyPawn = 4;
 		}
 		
-		//Ã‰tape 1 :calcul de la distance par rapport au centre je sous entend que  4X4 est le centre
+		//Étape 1 :calcul de la distance par rapport au centre je sous entend que  4X4 est le centre
 		
 		//si la fin du mouvement est en bas Ã  gauche je vise 3X3
-		if(posX <= 3 && posY <= 3){
+		if(posX < 3 && posY < 3){
 			dist =  Math.sqrt(Math.pow(3 - posX,2) + Math.pow(3 - posY,2));
 		}
 		
@@ -549,7 +537,7 @@ class Client {
 		}
 		
 		//si le mouvement est en bas Ã  droite je vise 4X3
-		else if(posX > 4 && posY > 4){
+		else if(posX > 4 && posY > 3){
 			dist =  Math.sqrt(Math.pow(4 - posX,2) + Math.pow(3 - posY,2));
 		}
 		//sinon c'est en haut Ã  gauche 3X4
@@ -565,7 +553,7 @@ class Client {
 			heuristique+=0.5;
 		}
 		
-		//Ã‰tape 2 regarder s'il y a des piÃ¨ces de la mÃªme couleur autour du moment d'arrivÃ©
+		//Étape 2 regarder s'il y a des piÃ¨ces de la mÃªme couleur autour du moment d'arrivÃ©
 		posY = Math.abs(posY - 8);
 	
 		//diagonale en haut a droite premier
@@ -598,32 +586,32 @@ class Client {
 		if(posX < 7){
 			//Étape 3 regarder Ã  l'horizontale
 			if(board[posX + 1][posY] == myPawn){
-				heuristique+=0.5;
+				heuristique+=1;
 			}
 		}
 		
 		if(posX > 0){
 			if(board[posX - 1][posY] == myPawn){
-				heuristique+=0.5;
+				heuristique+=1;
 			}
 		}
 		
 		//verticale
 		if(posY < 7){
 			if(board[posX][posY + 1] == myPawn){
-				heuristique+=0.5;
+				heuristique+=1;
 			}	
 		}
 		
 		if(posY > 0){
 			if(board[posX][posY - 1] == myPawn){
-				heuristique+=0.5;
+				heuristique+=1;
 			}
 		}
 		
 		//si on bouffe un ennemie
 		if(board[posX][posY] == ennemyPawn){
-			heuristique+=0.2;
+			heuristique-=0.1;
 		}
 		
 		return heuristique;
